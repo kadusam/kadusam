@@ -31,7 +31,10 @@ app.get('/', function(req, res){
 app.get('/t1/', function(req, res) {
   dak(function(err, c) {
     var cond = {
-      time: {$gt:new Date("2012-02-01 19:00:00"), $lt:new Date("2012-02-01 19:01:00")}
+      time: {
+        $gt:new Date(Number(req.param('min'))),
+        $lt:new Date(Number(req.param('max')))
+      }
     };
 
     c.find(cond).toArray(function(err, results) {
