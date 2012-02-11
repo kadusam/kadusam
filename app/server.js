@@ -40,6 +40,32 @@ app.get('/t1/', function(req, res) {
   });
 });
 
+app.get('/api/data/:action/:from/:to?', function(req, res) {
+
+  var action = req.params.action;
+  var from = new Date(req.params.from);
+  if (isNaN(from.valueOf())) {
+    res.json('oops! invalid parameter', 400);
+  }
+  var to = req.params.to;
+  if (to) {
+    to = new Date(to);
+    if (isNaN(to.valueOf())) {
+      res.json('oops! invalid parameter', 400);
+    }
+  }
+
+  dak(function(err, c) {
+    var cond = {
+      action: 'add',
+      time: {$gt:new Date("2012-02-01 19:00:00"), $lt:new Date("2012-02-01 19:01:00")}
+    };
+
+    c.find(cond).toArray(function(err, results) {
+      res.json(results);
+    });
+  });
+});
 
 app.get('/api/list/actions', function(req, res) {
   dak(function(err, c) {
