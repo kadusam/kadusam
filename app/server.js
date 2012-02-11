@@ -46,17 +46,16 @@ app.get('/t1/', function(req, res) {
 app.get('/api/data/:action/:from/:to?', function(req, res) {
 
   var action = req.params.action;
-  var from = new Date(req.params.from);
+  var from = toDate(req.params.from);
   if (isNaN(from.valueOf())) {
     res.json('oops! invalid parameter', 400);
   }
-  var to = req.params.to;
-  if (to) {
-    to = new Date(to);
-    if (isNaN(to.valueOf())) {
-      res.json('oops! invalid parameter', 400);
-    }
+  var to = toDate(req.params.to);
+  if (req.params.to && isNaN(to.valueOf())) {
+    res.json('oops! invalid parameter', 400);
   }
+
+  console.log("api data: ", action, from, to); 
 
   dak(function(err, c) {
     var cond = {
@@ -81,6 +80,17 @@ app.get('/api/list/actions', function(req, res) {
 
 function dak(callback) {
   db.collection('app', callback);
+}
+
+function toDate(str) {
+  if (str) {
+    if (str.match(/^[0-9]*$/)) {
+      return new Date(parseInt(str));
+    }
+    return new Date(str);
+  }
+
+  return undefined;
 }
 
 app.get('/mg/', function(req, res) {
