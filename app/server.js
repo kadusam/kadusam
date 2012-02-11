@@ -28,10 +28,6 @@ app.get('/', function(req, res){
   res.render('index');
 });
 
-app.get('/test/:id', function(req, res) {
-  res.send('id:' + req.params.id);
-});
-
 app.get('/t1/', function(req, res) {
   dak(function(err, c) {
     var cond = {
@@ -47,12 +43,13 @@ app.get('/t1/', function(req, res) {
 
 app.get('/api/action/list', function(req, res) {
   dak(function(err, c) {
-
     c.distinct("action", (function(err, results) {
       res.json(results);
     }));
   });
 });
+
+
 
 function dak(callback) {
   db.collection('app', callback);
