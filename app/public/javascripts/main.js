@@ -5,8 +5,7 @@ $(function () {
         });
         var chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'container',
-                type: 'column'
+                renderTo: 'container'
             },
             xAxis: {
                 type: 'datetime'
@@ -31,7 +30,6 @@ $(function () {
                         max: date2.getTime()
                     },
                     success: function (data) {
-                        // console.log(data);
                         createChart(data);
                     }
                 });
