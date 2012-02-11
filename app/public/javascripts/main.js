@@ -23,4 +23,7 @@ $(function () {
             createChart(data);
         }
     });
+
+    $('#datetime1').datetimepicker();
+    $('#datetime2').datetimepicker();
 });
