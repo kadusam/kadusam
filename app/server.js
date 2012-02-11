@@ -60,8 +60,12 @@ app.get('/api/data/:action/:from/:to?', function(req, res) {
   dak(function(err, c) {
     var cond = {
       action: _action,
-      time: {$gt:from, $lt:to}
+      time: {$gt:from}
     };
+
+    if (to) {
+      cond.time.$lt=to;
+    }
 
     c.find(cond).toArray(function(err, results) {
       res.json(results);
