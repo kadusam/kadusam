@@ -42,7 +42,7 @@ app.get('/t1/', function(req, res) {
 
 app.get('/api/data/:action/:from/:to?', function(req, res) {
 
-  var action = req.params.action;
+  var _action = req.params.action;
   var from = toDate(req.params.from);
   if (isNaN(from.valueOf())) {
     res.json('oops! invalid parameter', 400);
@@ -52,12 +52,12 @@ app.get('/api/data/:action/:from/:to?', function(req, res) {
     res.json('oops! invalid parameter', 400);
   }
 
-  console.log("api data: ", action, from, to); 
+  console.log("api data: ", _action, from, to); 
 
   dak(function(err, c) {
     var cond = {
-      action: 'add',
-      time: {$gt:new Date("2012-02-01 19:00:00"), $lt:new Date("2012-02-01 19:01:00")}
+      action: _action,
+      time: {$gt:from, $lt:to}
     };
 
     c.find(cond).toArray(function(err, results) {
