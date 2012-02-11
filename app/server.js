@@ -97,28 +97,4 @@ function toDate(str) {
   return undefined;
 }
 
-app.get('/mg/', function(req, res) {
-  res.contentType('application/json');
-
-  var insert_id = req.params.id;
-  db.collection('test', function(err, collection) {
-    collection.find({id: {$or: [{$gt:'1'}, {$gt:1}]}}).toArray(function(err, results){
-      res.send(results);
-    });
-    collection.find().toArray(function(err, results){
-      res.send(results);
-    });
-  });
-});
-
-app.get('/mg/:id/:name', function(req, res) {
-  //var data = {id:parseInt(req.params.id), data:req.params.name};
-  var data = {id:req.params.id, data:req.params.name};
-  db.collection('test', function(err, collection) {
-    collection.insert(data, function(err, docs){});
-    res.send("insert ok");
-    console.log(data);
-  });
-});
-
 app.listen(3000);
