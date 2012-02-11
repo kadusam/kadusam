@@ -1,7 +1,7 @@
 var mongo = require('mongodb');
 var express = require('express');
 var config = require('./conf.js');
-var db = new mongo.Db('dak', new mongo.Server(config.db.host, config.db.port, {}), {native_parser:true});
+var db = new mongo.Db('dak', new mongo.Server(config.db.host, config.db.port, {}), {native_parser:false});
 db.open(function(){});
 
 var app = express.createServer();
@@ -36,7 +36,7 @@ app.get('/t1/', function(req, res) {
   res.contentType('application/json');
 
   dak(function(err, c) {
-    c.find({time: {$gt:new Date("2012-01-31 10:55:00"), $lt:new Date("2012-01-31 19:00:00")}})
+    c.find({time: {$gt:new Date("2012-02-01 19:00:00"), $lt:new Date("2012-02-01 19:01:00")}})
       .toArray(function(err, results) {
         res.send(results);
     });
