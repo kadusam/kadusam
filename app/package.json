@@ -1,0 +1,19 @@
+{
+    "author": "",
+    "name": "kadusam",
+    "version": "0.0.0",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/kadusam/kadusam.git"
+    },
+    "engines": {
+        "node": "~0.6.10"
+    },
+    "dependencies": {
+        "ejs": "0.6.1",
+        "express": "2.5.8",
+        "mongodb": "0.9.8-7"
+    },
+    "devDependencies": {},
+    "optionalDependencies": {}
+}
