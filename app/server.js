@@ -41,14 +41,13 @@ app.get('/t1/', function(req, res) {
 });
 
 
-app.get('/api/action/list', function(req, res) {
+app.get('/api/list/actions', function(req, res) {
   dak(function(err, c) {
     c.distinct("action", (function(err, results) {
       res.json(results);
     }));
   });
 });
-
 
 
 function dak(callback) {
