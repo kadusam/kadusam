@@ -71,12 +71,4 @@ app.get('/mg/:id/:name', function(req, res) {
   });
 });
 
-
-
-
-
 app.listen(3000);
-
-
-
-
