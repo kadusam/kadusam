@@ -33,12 +33,10 @@ app.get('/test/:id', function(req, res) {
 });
 
 app.get('/t1/', function(req, res) {
-  res.contentType('application/json');
-
   dak(function(err, c) {
     c.find({time: {$gt:new Date("2012-02-01 19:00:00"), $lt:new Date("2012-02-01 19:01:00")}})
       .toArray(function(err, results) {
-        res.send(results);
+        res.json(results);
     });
   });
 });
