@@ -43,25 +43,27 @@ app.get('/t1/', function(req, res) {
   });
 });
 
-app.get('/api/data/:action/:from/:to?', function(req, res) {
+app.get('/api/data', function(req, res) {
 
-  var _action = req.params.action;
-  var from = toDate(req.params.from);
+  var action = req.param('action');
+  var from = toDate(req.param('from'));
   if (isNaN(from.valueOf())) {
     res.json('oops! invalid parameter', 400);
   }
-  var to = toDate(req.params.to);
+  var to = toDate(req.param('to'));
   if (req.params.to && isNaN(to.valueOf())) {
     res.json('oops! invalid parameter', 400);
   }
 
-  console.log("api data: ", _action, from, to); 
+  console.log("api data: ", action, from, to); 
 
   dak(function(err, c) {
     var cond = {
-      action: _action,
       time: {$gt:from}
     };
+    if (action) {
+      cond.action=action;
+    }
 
     if (to) {
       cond.time.$lt=to;
