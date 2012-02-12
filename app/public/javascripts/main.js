@@ -10,13 +10,43 @@ $(function () {
             xAxis: {
                 type: 'datetime'
             },
+            plotOptions: {
+                area: {
+                    fillColor: {
+                        linearGradient: [0,0,0,300],
+                        stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, 'rgba(2,0,0,0)']
+                        ]
+                    },
+                    animation: false, 
+                    lineWidth: 1,
+                    marker: {
+                        enabled: false,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                radius: 5
+                            }
+                        }
+                    },
+                    shadow: false,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    }
+                },
+            },
             series: [{
+                type: 'area',
                 data: data
             }]
         });
     }
 
-    $('.datetimepicker').datetimepicker().change(function (e) {
+    function update() {
+        var action = $('#action').val();
         var datetime1 = $('#datetime1').val();
         var datetime2 = $('#datetime2').val();
         if (datetime1 && datetime2) {
@@ -24,10 +54,11 @@ $(function () {
             var date2 = new Date(datetime2);
             if (date1 < date2) {
                 $.ajax({
-                    url: '/t1/',
+                    url: '/api/data',
                     data: {
-                        min: date1.getTime(),
-                        max: date2.getTime()
+                        action: action,
+                        from: date1.getTime(),
+                        to: date2.getTime()
                     },
                     success: function (data) {
                         createChart(data);
@@ -35,5 +66,25 @@ $(function () {
                 });
             }
         }
+    }
+
+    $('.datetimepicker').datetimepicker().change(function (e) {
+        update();
     });
+
+    $('#action').blur(function() {
+        update();
+    });
+
+    $.ajax({
+        url: '/api/list/actions',
+        success: function (data) {
+            $('#action').typeahead({source: data});
+        }
+    });
+
+    $('#datetime1').val('02/01/2012 00:00');
+    $('#datetime2').val('02/01/2012 01:00');
+    $('#action').val('index');
+    update();
 });
