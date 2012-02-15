@@ -45,6 +45,18 @@ $(function () {
         });
     }
 
+    var update_delay_timer = null;
+    function onUpdate() {
+        if (update_delay_timer) {
+            clearTimeout(update_delay_timer);
+        }
+        update_delay_timer = setTimeout(function() { 
+            update_delay_timer = null;
+            update(); 
+        }, 400);
+        
+    }
+
     function update() {
         var action = $('#action').val();
         var datetime1 = $('#datetime1').val();
@@ -69,11 +81,11 @@ $(function () {
     }
 
     $('.datetimepicker').datetimepicker().change(function (e) {
-        update();
+        onUpdate();
     });
 
     $('#action').blur(function() {
-        update();
+        onUpdate();
     });
 
     $.ajax({
