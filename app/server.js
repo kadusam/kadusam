@@ -75,6 +75,23 @@ app.get('/api/data', function(req, res) {
   });
 });
 
+app.get('/api/point', function(req, res) {
+  var time = toDate(req.param('time'));
+  if (!time) {
+    res.json('oops! invalid parameter', 400);
+  }
+  
+  dak(function(err, c) {
+    var cond = {
+      time: time
+    };
+
+    c.find(cond).toArray(function(err, results) {
+      res.json(results);
+    });
+  });
+});
+
 app.get('/api/list/actions', function(req, res) {
   dak(function(err, c) {
     c.distinct("action", (function(err, results) {

@@ -5,17 +5,40 @@ $(function () {
         });
 
         var point_click = function () {
-           console.log(this);
-           var box = $('<div>')
-              .attr('title', "values")
-              .text(this.y)
-              .appendTo('body')
-              .hide();
-           box.dialog({
-              open: 'blind',
-              hide: 'fade',
-              position: [this.pageX, this.pageY]
-           });
+          console.log(this);
+          var time = this.x;
+          var rt = this.y;
+
+          $.ajax({
+            url: '/api/point',
+            data: {
+                time: time
+            },
+            success: function(d) {
+              console.log(d);
+              var box = $('<div>')
+                 .attr('title', 'details')
+                 .hide()
+                 .appendTo('body');
+
+              $.map(d, function(p) {
+                var dl = $('<dl>');
+                $.map(p, function(v, k) {
+                    console.log(k,v);
+                    dl.append($('<dt>').text(k));
+                    dl.append($('<dd>').text(v));
+                });
+                box.append(dl);
+              });
+              
+
+              box.dialog({
+                 open: 'blind',
+                 hide: 'fade',
+                 position: [this.pageX, this.pageY]
+              });
+            }
+          });
         };
 
         var chart = new Highcharts.Chart({
