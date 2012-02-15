@@ -5,10 +5,13 @@ $(function () {
         });
         var chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'container'
+                renderTo: 'container',
+                zoomType: 'x',
+                spacingRight: 20
             },
             xAxis: {
-                type: 'datetime'
+                type: 'datetime',
+                maxZoom: 1000, // 1s
             },
             yAxis: {
                 title: {
