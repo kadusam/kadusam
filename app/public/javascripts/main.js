@@ -3,6 +3,21 @@ $(function () {
         data = $.map(data, function (e) {
             return [[new Date(e.time).getTime(), Number(e.response_time)]];
         });
+
+        var point_click = function () {
+           console.log(this);
+           var box = $('<div>')
+              .attr('title', "values")
+              .text(this.y)
+              .appendTo('body')
+              .hide();
+           box.dialog({
+              open: 'blind',
+              hide: 'fade',
+              position: [this.pageX, this.pageY]
+           });
+        };
+
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container',
@@ -45,6 +60,13 @@ $(function () {
                         }
                     }
                 },
+                series: {
+                    point: {
+                       events: {
+                         click: point_click 
+                       } 
+                    }
+                }
             },
             series: [{
                 type: 'area',
@@ -108,4 +130,5 @@ $(function () {
     $('#datetime2').val('02/01/2012 01:00');
     $('#action').val('index');
     update();
+
 });
