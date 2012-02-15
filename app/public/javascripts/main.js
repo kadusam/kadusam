@@ -1,5 +1,5 @@
 $(function () {
-    function createChart (data) {
+    function createChart (name, data) {
         data = $.map(data, function (e) {
             return [[new Date(e.time).getTime(), Number(e.response_time)]];
         });
@@ -45,6 +45,7 @@ $(function () {
             },
             series: [{
                 type: 'area',
+                name: name,
                 data: data
             }]
         });
@@ -78,7 +79,7 @@ $(function () {
                         to: date2.getTime()
                     },
                     success: function (data) {
-                        createChart(data);
+                        createChart(action, data);
                     }
                 });
             }
