@@ -10,6 +10,11 @@ $(function () {
             xAxis: {
                 type: 'datetime'
             },
+            yAxis: {
+                title: {
+                    text: 'Response Time'
+                }
+            },
             plotOptions: {
                 area: {
                     fillColor: {
