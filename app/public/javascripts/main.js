@@ -1,7 +1,7 @@
 $(function () {
     function createChart (name, data) {
         data = $.map(data, function (e) {
-            return [[new Date(e.time).getTime(), Number(e.response_time)]];
+            return [[new Date(e.time).getTime() + 9*60*60*1000 , Number(e.response_time)]];
         });
 
         var point_click = function () {
