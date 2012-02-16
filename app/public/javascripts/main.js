@@ -1,8 +1,10 @@
 $(function () {
     function createChart (name, data) {
+        /*
         data = $.map(data, function (e) {
             return [[new Date(e.time).getTime() + 9*60*60*1000 , Number(e.response_time)]];
         });
+        //*/
 
         var point_click = function () {
           console.log(this);
@@ -35,6 +37,7 @@ $(function () {
               box.dialog({
                  open: 'blind',
                  hide: 'fade',
+                 width: 400,
                  position: [this.pageX, this.pageY]
               });
             }

@@ -70,7 +70,13 @@ app.get('/api/data', function(req, res) {
     }
 
     c.find(cond).toArray(function(err, results) {
-      res.json(results);
+      
+      var ret = []; 
+      results.forEach(function(r) {
+        ret.push([new Date(r.time).getTime()+9*3600*1000, Number(r.response_time)]);
+      });
+      res.json(ret);
+
     });
   });
 });
