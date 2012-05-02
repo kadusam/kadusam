@@ -1,9 +1,9 @@
 var mongo = require('mongodb');
 var express = require('express');
 var config = require('./conf.js');
-var db = new mongo.Db('dak', new mongo.Server(config.db.host, config.db.port, {}), {native_parser:false});
+var db = new mongo.Db('apache', new mongo.Server(config.db.host, config.db.port, {}), {native_parser:false});
 db.open(function(){});
-
+ 
 var app = express.createServer();
 
 // Configuration
@@ -27,6 +27,9 @@ app.configure('production', function(){
 app.get('/', function(req, res){
   res.render('index');
 });
+app.get('/next', function(req, res){
+  res.render('next');
+});
 
 app.get('/t1/', function(req, res) {
   dak(function(err, c) {
@@ -47,15 +50,17 @@ app.get('/api/data', function(req, res) {
 
   var action = req.param('action');
   var from = toDate(req.param('from'));
-  if (isNaN(from.valueOf())) {
+  if (!from) {
     res.json('oops! invalid parameter', 400);
+    return;
   }
   var to = toDate(req.param('to'));
-  if (req.params.to && isNaN(to.valueOf())) {
+  if (req.param('to') && !to) {
     res.json('oops! invalid parameter', 400);
+    return;
   }
 
-  console.log("api data: ", action, from, to); 
+  console.log("api data: action:", action, ' from:', from, ' to', to); 
 
   dak(function(err, c) {
     var cond = {
@@ -81,10 +86,36 @@ app.get('/api/data', function(req, res) {
   });
 });
 
+app.get('/api/alldata', function(req, res) {
+  var from = toDate(req.param('from'));
+  if (!from) {
+    res.json('oops! invalid parameter', 400);
+    return;
+  }
+  var to = toDate(req.param('to'));
+  if (!to) {
+    res.json('oops! invalid parameter', 400);
+    return;
+  }
+
+  dak(function(err, c) {
+    var cond = {
+      time: {$gt:from, $lt:to}
+    };
+
+    console.log(cond);
+    c.find(cond).toArray(function(err, results) {
+      res.json(results);
+    });
+  });
+
+});
+
 app.get('/api/point', function(req, res) {
   var time = toDate(req.param('time'));
   if (!time) {
     res.json('oops! invalid parameter', 400);
+    return;
   }
   
   dak(function(err, c) {
@@ -108,18 +139,23 @@ app.get('/api/list/actions', function(req, res) {
 
 
 function dak(callback) {
-  db.collection('app', callback);
+  db.collection('access', callback);
 }
 
 function toDate(str) {
+  var ret = null;
   if (str) {
     if (str.match(/^[0-9]*$/)) {
-      return new Date(parseInt(str));
+      ret = new Date(parseInt(str));
+    } else {
+      ret = new Date(str);
     }
-    return new Date(str);
   }
-
-  return undefined;
+  
+  if (!ret || isNaN(ret.valueOf())) {
+    return null;
+  }
+  return ret;
 }
 
 app.listen(config.http.port);

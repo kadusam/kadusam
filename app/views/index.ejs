@@ -1,10 +1,178 @@
-index of dak
+<script type="text/javascript">
+  var chart_data = new ChartData();
+  chart_data.value_key = 'response_time';
 
+  function fetch() {
+
+    var f = new Date($('#datetime_from').val());
+    var t = new Date($('#datetime_to').val());
+    if (!f || !t || t < f) { return; }
+
+    $('#button_fetch').attr({disabled: 'disabled'}).text('Loading...');
+    var fd = new FetchData('/api/alldata');
+    fd.from = f.getTime();
+    fd.to = t.getTime();
+    fd.fetch({
+      error: function() {
+        alert("fetch failed");
+      },
+      success: function(data) {
+        console.log(data);
+        chart_data.data = data;
+        draw();
+      },
+      complete: function (){
+        $('#button_fetch').removeAttr('disabled').text('Fetch');
+      },
+    });
+  }
+
+  function draw() {
+    chart_data.resolve   = Resolver[$('#resolver').val()];
+    chart_data.aggregate = Aggregation[$('#aggregation').val()];
+    var export_data = chart_data.export();
+    console.log(export_data);
+    createChart("value", export_data, function(){
+      var table = data2table(chart_data.getByTime(this.x));
+      table.dataTable({bPaginate: false});
+    });
+    
+  }
+
+
+
+  function data2table(data) {
+    function getKeys(a) {
+      var ret = new Array();
+      for (i in a) {
+        ret.push(i);
+      }
+      return ret;
+    }
+
+    $('#data_table').empty();
+
+    var table = $('<table border="1">');
+    var addTr = function(elm, td_list) {
+      var tr = $('<tr>');
+      $.each(td_list, function(i,td){
+        tr.append(td);
+      });
+
+      elm.append(tr);
+      return elm;
+    };
+    var keys = getKeys(data[0]);
+
+    table.append(addTr($('<thead>'), keys.map(function(v) { return $('<th>').text(v); })));
+
+    var tbody = $('<tbody>');
+    $.each(data, function(index, d) {
+      addTr(tbody, keys.map(function(k) { return $('<td>').text(d[k]); }));
+    });
+    table.append(tbody);
+  
+    $('#data_table').append(table);
+    return table;
+  }
+
+
+  function createChart(name, data, on_point_click) {
+     var chart = new Highcharts.Chart({
+         chart: {
+             renderTo: 'container',
+             zoomType: 'x',
+             spacingRight: 20
+         },
+         xAxis: {
+             type: 'datetime',
+             maxZoom: 1000, // 1s
+         },
+         yAxis: {
+             title: {
+                 text: 'Response Time'
+             }
+         },
+         plotOptions: {
+             area: {
+                 fillColor: {
+                     linearGradient: [0,0,0,300],
+                     stops: [
+                         [0, Highcharts.getOptions().colors[0]],
+                         [1, 'rgba(2,0,0,0)']
+                     ]
+                 },
+                 animation: false,
+                 lineWidth: 1,
+                 marker: {
+                     enabled: false,
+                     states: {
+                         hover: {
+                             enabled: true,
+                             radius: 5
+                         }
+                     }
+                 },
+                 shadow: false,
+                 states: {
+                     hover: {
+                         lineWidth: 1
+                     }
+                 }
+             },
+             series: {
+                 point: {
+                    events: {
+                      click: on_point_click
+                    }
+                 }
+             }
+         },
+         series: [{
+             type: 'area',
+             name: name,
+             data: data
+         }]
+     });
+  }
+</script>
+
+
+
+<div>
+  From:<input class="datetimepicker" id="datetime_from">
+  To:<input class="datetimepicker" id="datetime_to">
+  <button id="button_fetch" onclick="javascript:fetch();">Fetch</button>
+</div>
+<hr>
 <div id="container"></div>
-<div>
-  From:<input class="datetimepicker" id="datetime1">
-  To:<input class="datetimepicker" id="datetime2">
-</div>
-<div>
-  action<input type="text" id="action">
-</div>
+
+Resolver:<select id="resolver"></select><br>
+Aggregation:<select id="aggregation"></select><br>
+<button onclick="javascript:draw();">Draw</button>
+<hr>
+<div id="data_table"></div>
+
+
+
+<script>
+$(function() {
+  $('.datetimepicker').datetimepicker({
+    dateFormat: 'yy/mm/dd',
+  });
+
+
+  // create options
+  (function() {
+    for (var n in Resolver) {
+      $('#resolver').append($('<option>').text(n).val(n));
+    }
+    for (var n in Aggregation) {
+      $('#aggregation').append($('<option>').attr({value:n}).text(n));
+    }
+  })();
+
+  $('<option>')
+});
+
+</script>
